@@ -1,4 +1,4 @@
-from welcome_to.cards.card_constants import Action
+from welcome_to.card_constants import Action
 
 
 class Card:

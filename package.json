@@ -1,0 +1,34 @@
+{
+  "name": "welcome_to",
+  "version": "1.0.0",
+  "description": "Card dealer for Welcome To... slackbot.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "buildProd": "cp ./package.json ./build/package.json; npm install --only=prod --prefix ./build",
+    "deploy": "node deploy_tools.js; aws lambda update-function-code --function-name welcometoAPI --zip-file fileb://lambda.zip"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/curranjm/welcome_to.git"
+  },
+  "author": "Jason Curran",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/curranjm/welcome_to/issues"
+  },
+  "homepage": "https://github.com/curranjm/welcome_to#readme",
+  "dependencies": {
+    "archiver": "^3.0.0",
+    "node-uuid": "^1.4.8"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^9.0.1",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0"
+  }
+}

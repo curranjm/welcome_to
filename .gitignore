@@ -107,3 +107,6 @@ venv.bak/
 .idea/
 
 bin
+node_modules/
+build/
+lambda.zip

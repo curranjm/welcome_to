@@ -6,6 +6,7 @@ const DB = require('./dynamo');
 const DECKSIZE = 81;
 const GAME_TABLE = 'welcomeToGamestate';
 const GAME_ID_KEY = 'gameID';
+const ESTATE_GOAL_KEY = 'estates';
 
 /** ***************************************************************************
  *
@@ -152,26 +153,51 @@ const initializeGamestate = (advanced) => {
  *
  *************************************************************************** */
 
-// const getCityPlanStrings = (cityPlans) => {
-//   const n1 =  const
-// };
+const getCityPlanString = (cityPlan, completedPlans) => {
+  const goalType = Object.keys(cityPlan.goals);
+  const isEstateGoal = goalType.includes(ESTATE_GOAL_KEY);
+
+  // get the goal description
+  let goal = '';
+  if (isEstateGoal) {
+    goal += 'Requires estates of the following sizes: ';
+    goal += cityPlan.goals.estates.join(', ');
+  } else {
+    goal += cityPlan.goals.other;
+  }
+
+  // get the points string
+  const pointsFirst = completedPlans.includes(cityPlan.n) ? '`first`: *DONE*' : `\`first\`: ${cityPlan.points.first}`;
+  const pointsOther = `\`other\`: ${cityPlan.points.other}`;
+
+  // assemble the full string
+  return `\`n${cityPlan.n}\`: ${goal}\n${pointsFirst}  |  ${pointsOther}`;
+};
+
+const getCityPlanData = (cityPlans, completedPlans) => {
+  const n1 = constants.CITY_PLANS[cityPlans.n1];
+  const n2 = constants.CITY_PLANS[cityPlans.n2];
+  const n3 = constants.CITY_PLANS[cityPlans.n3];
+
+  return {
+    n1: getCityPlanString(n1, completedPlans),
+    n2: getCityPlanString(n2, completedPlans),
+    n3: getCityPlanString(n3, completedPlans),
+  };
+};
 
 const getCardDataFromGamestate = ({
   partitions,
   cityPlans,
+  completedPlans,
 }) => {
   const partitionData = partitions.map(partition => ({
     faceCard: constants.CARDS[partition.activeFaceCardID],
     flipCard: constants.CARDS[partition.activeFlipCardID],
   }));
-  const cityPlanData = {
-    n1: constants.CITY_PLANS[cityPlans.n1],
-    n2: constants.CITY_PLANS[cityPlans.n2],
-    n3: constants.CITY_PLANS[cityPlans.n3],
-  };
   return {
     partitions: partitionData,
-    cityPlans: cityPlanData,
+    cityPlans: getCityPlanData(cityPlans, completedPlans),
   };
 };
 
@@ -218,7 +244,27 @@ const getSlackPayload = ({
     {
       type: 'section',
       text: {
-        text: `*n1*: ${cityPlans[0]}`,
+        text: cityPlans.n1,
+        type: 'mrkdwn',
+      },
+    },
+    {
+      type: 'divider',
+    },
+    {
+      type: 'section',
+      text: {
+        text: cityPlans.n2,
+        type: 'mrkdwn',
+      },
+    },
+    {
+      type: 'divider',
+    },
+    {
+      type: 'section',
+      text: {
+        text: cityPlans.n3,
         type: 'mrkdwn',
       },
     },

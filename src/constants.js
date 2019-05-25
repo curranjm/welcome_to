@@ -384,7 +384,18 @@ const CITY_PLANS = Object.freeze({
   6: {
     n: 1,
     goals: {
-      temp: '7 temps must be hired.',
+      estates: [1, 1, 1, 1, 1, 1],
+    },
+    star: false,
+    points: {
+      first: 8,
+      other: 4,
+    },
+  },
+  7: {
+    n: 1,
+    goals: {
+      other: '*7* temps must be hired.',
     },
     star: true,
     points: {
@@ -392,10 +403,10 @@ const CITY_PLANS = Object.freeze({
       other: 3,
     },
   },
-  7: {
+  8: {
     n: 1,
     goals: {
-      firstLast: 'the first and last house on each street must be built.',
+      other: 'The first and last house on each street must be built.',
     },
     star: true,
     points: {
@@ -403,10 +414,10 @@ const CITY_PLANS = Object.freeze({
       other: 4,
     },
   },
-  8: {
+  9: {
     n: 1,
     goals: {
-      bis: '5 duplicate houses\' numbers (bis) must be built on the same street.',
+      other: '*Bis* must be used *5* times on the same street.',
     },
     star: true,
     points: {
@@ -414,10 +425,10 @@ const CITY_PLANS = Object.freeze({
       other: 3,
     },
   },
-  9: {
+  10: {
     n: 1,
     goals: {
-      completeRow: 'all houses must be built on the top street.',
+      other: '*All* houses must be built on the *top* street.',
     },
     star: true,
     points: {
@@ -425,23 +436,12 @@ const CITY_PLANS = Object.freeze({
       other: 3,
     },
   },
-  10: {
-    n: 1,
-    goals: {
-      completeRow: 'all houses must be built on the top street.',
-    },
-    star: true,
-    points: {
-      first: 8,
-      other: 4,
-    },
-  },
   11: {
     n: 1,
     goals: {
-      estates: [1, 1, 1, 1, 1, 1],
+      other: '*All* houses must be built on the *bottom* street.',
     },
-    star: false,
+    star: true,
     points: {
       first: 8,
       other: 4,
@@ -516,7 +516,7 @@ const CITY_PLANS = Object.freeze({
   18: {
     n: 2,
     goals: {
-      parksPoolsRoundabout: 'the player must build all of the parks, all of the pools, and one roundabout in the same street.',
+      other: 'Build *all* of the *parks* and *pools*, and *1* *roundabout* on the *same* street.',
     },
     star: true,
     points: {
@@ -527,7 +527,7 @@ const CITY_PLANS = Object.freeze({
   19: {
     n: 2,
     goals: {
-      parksPoolsOnTwo: 'two streets must have all of the parks built.',
+      other: '*2* streets must have *all* of the parks built.',
     },
     star: true,
     points: {
@@ -538,7 +538,7 @@ const CITY_PLANS = Object.freeze({
   20: {
     n: 2,
     goals: {
-      parksPools: 'all of the parks and all of the pools on the middle street must be built.',
+      other: '*All* of the *parks* and *pools* on the *middle* street must be built.',
     },
     star: true,
     points: {
@@ -549,7 +549,7 @@ const CITY_PLANS = Object.freeze({
   21: {
     n: 2,
     goals: {
-      parksPools: 'all of the parks and all of the pools on the bottom street must be built.',
+      other: '*All* of the *parks* and *pools* on the *bottom* street must be built.',
     },
     star: true,
     points: {
@@ -560,7 +560,7 @@ const CITY_PLANS = Object.freeze({
   22: {
     n: 2,
     goals: {
-      parksPoolsOnTwo: 'two streets must have all of the pools built.',
+      other: '*2* streets must have *all* of the *pools* built.',
     },
     star: true,
     points: {

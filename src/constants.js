@@ -636,7 +636,42 @@ const CITY_PLANS = Object.freeze({
   },
 });
 
+const IMAGES = Object.freeze({
+  1: 'https://i.ibb.co/Wc3XYC0/number1.png',
+  2: 'https://i.ibb.co/Yk6Ms0Z/number2.png',
+  3: 'https://i.ibb.co/gDYtRDK/number3.png',
+  4: 'https://i.ibb.co/PMm40JF/number4.png',
+  5: 'https://i.ibb.co/1btL884/number5.png',
+  6: 'https://i.ibb.co/BgKLRnh/number6.png',
+  7: 'https://i.ibb.co/0M2vFqZ/number7.png',
+  8: 'https://i.ibb.co/zh7SzkW/number8.png',
+  9: 'https://i.ibb.co/ns9gZf1/number9.png',
+  10: 'https://i.ibb.co/DfvHW1m/number10.png',
+  11: 'https://i.ibb.co/tHrMjPC/number11.png',
+  12: 'https://i.ibb.co/G5FgPgg/number12.png',
+  13: 'https://i.ibb.co/G5Vr21F/number13.png',
+  14: 'https://i.ibb.co/dc1P8q3/number14.png',
+  15: 'https://i.ibb.co/C83Mg78/number15.png',
+  16: 'https://i.ibb.co/pdbBhw0/fence.png',
+  17: 'https://i.ibb.co/5rYzYNt/agent.png',
+  18: 'https://i.ibb.co/2WBspwx/park.png',
+  19: 'https://i.ibb.co/NK0d2g7/pool.png',
+  20: 'https://i.ibb.co/zPTJVkw/temp.png',
+  21: 'https://i.ibb.co/DYZjFtw/bis.png',
+});
+
+const ACTIONS = Object.freeze({
+  16: 'fence',
+  17: 'agent',
+  18: 'park',
+  19: 'pool',
+  20: 'temp',
+  21: 'bis',
+});
+
 module.exports = {
   CARDS,
   CITY_PLANS,
+  IMAGES,
+  ACTIONS,
 };

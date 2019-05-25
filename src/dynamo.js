@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 const AWS = require('aws-sdk');
 
 const documentClient = new AWS.DynamoDB.DocumentClient({
@@ -12,31 +13,12 @@ const documentClient = new AWS.DynamoDB.DocumentClient({
  * @param {*} table
  */
 const get = (key, value, table) => new Promise((resolve, reject) => {
-  if (!table) {
-    const error = {
-      message: 'table needed',
-    };
-    throw error;
-  }
-  if (typeof key !== 'string') {
-    const error = {
-      message: `key was not string and was ${JSON.stringify(key)} on table ${table}`,
-    };
-    throw error;
-  }
-  if (typeof value !== 'string') {
-    const error = {
-      message: `value was not string and was ${JSON.stringify(value)} on table ${table}`,
-    };
-    throw error;
-  }
   const params = {
     TableName: table,
     Key: { [key]: value },
   };
   documentClient.get(params, (err, data) => {
     if (err) {
-      console.log(`There was an error fetching the data for ${key} ${value} on table ${table}`, err);
       return reject(err);
     }
     return resolve(data.Item);

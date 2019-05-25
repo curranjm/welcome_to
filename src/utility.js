@@ -1,3 +1,12 @@
+const wretch = require('wretch');
+
+wretch().polyfills({
+  // eslint-disable-next-line global-require
+  fetch: require('node-fetch'),
+});
+
+const SLACK_INCOMING_WEBHOOK_URL = 'https://hooks.slack.com/services/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';
+
 /** ***************************************************************************
  *
  * Random number generation.
@@ -6,19 +15,20 @@
  *
  *************************************************************************** */
 
+/* eslint-disable */
 /**
  * Generate a seed function.
  *
  * @param {string} str String used to generate the seed function.
  */
 const xmur3 = (str) => {
-  for(var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
-      h = Math.imul(h ^ str.charCodeAt(i), 3432918353),
-      h = h << 13 | h >>> 19;
+  for (var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353),
+    h = h << 13 | h >>> 19;
   return function() {
-      h = Math.imul(h ^ h >>> 16, 2246822507);
-      h = Math.imul(h ^ h >>> 13, 3266489909);
-      return (h ^= h >>> 16) >>> 0;
+    h = Math.imul(h ^ h >>> 16, 2246822507);
+    h = Math.imul(h ^ h >>> 13, 3266489909);
+    return (h ^= h >>> 16) >>> 0;
   }
 };
 
@@ -43,10 +53,11 @@ const sfc32 = (a, b, c, d) => {
     return (t >>> 0) / 4294967296;
   }
 };
+/* eslint-enable */
 
 /**
  * Get a function that, given a max integer, will return a pseudo random
- * int from 0 to max - 1.
+ * int from 0 to max - 1 inclusive.
  *
  * @returns {function}
  */
@@ -97,8 +108,15 @@ const done = response => ({
   },
 });
 
+const sendToSlackbot = payload => wretch(SLACK_INCOMING_WEBHOOK_URL)
+  .headers({ 'Content-Type': 'text/plain' })
+  .json(payload)
+  .post()
+  .res();
+
 module.exports = {
   getRandomIntGenerator,
   shuffle,
   done,
+  sendToSlackbot,
 };

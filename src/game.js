@@ -101,10 +101,10 @@ const initializeCityPlans = (cityPlans, getRandom) => {
  *
  * @param {boolean} advanced Whether or not this game is using the advanced rules.
  */
-const initializeGameState = async (advanced) => {
+const getNewGameState = (gameID, advanced, shuffle, randomIntGenerator) => {
   // Initialize a list of card IDs and shuffle it.
   const deck = getDeckArray(DECKSIZE);
-  utility.shuffle(deck);
+  shuffle(deck);
 
   // Break the deck into three equal-sized piles.
   const partitions = [];
@@ -115,16 +115,25 @@ const initializeGameState = async (advanced) => {
   // Randomly select three city plans.
   const cityPlans = initializeCityPlans(
     getCityPlans(advanced),
-    utility.getRandomIntGenerator(),
+    randomIntGenerator,
   );
 
   // Build gamestate object.
-  const gamestate = {
-    gameID: uuid.v1(),
+  return {
+    gameID,
     partitions,
     cityPlans,
+    completedPlans: [],
   };
+};
 
+const initializeGamestate = (advanced) => {
+  const gamestate = getNewGameState(
+    uuid.v1(),
+    advanced,
+    utility.shuffle,
+    utility.getRandomIntGenerator(),
+  );
   return DB.write(
     gamestate,
     GAME_TABLE,
@@ -142,6 +151,10 @@ const initializeGameState = async (advanced) => {
  * Game functions
  *
  *************************************************************************** */
+
+// const getCityPlanStrings = (cityPlans) => {
+//   const n1 =  const
+// };
 
 const getCardDataFromGamestate = ({
   partitions,
@@ -164,6 +177,7 @@ const getCardDataFromGamestate = ({
 
 const getSlackPayload = ({
   partitions,
+  cityPlans,
 }) => ({
   blocks: [
     {
@@ -194,6 +208,41 @@ const getSlackPayload = ({
         type: 'mrkdwn',
       },
     },
+    {
+      type: 'section',
+      text: {
+        text: '```City plans:```',
+        type: 'mrkdwn',
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        text: `*n1*: ${cityPlans[0]}`,
+        type: 'mrkdwn',
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        text: '```Actions available next turn:```',
+        type: 'mrkdwn',
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        text: `:${constants.ACTIONS[partitions[0].faceCard.action]}:   :${constants.ACTIONS[partitions[1].faceCard.action]}:   :${constants.ACTIONS[partitions[2].faceCard.action]}:`,
+        type: 'mrkdwn',
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        text: '```Options:```',
+        type: 'mrkdwn',
+      },
+    },
   ],
 });
 
@@ -211,7 +260,8 @@ module.exports = {
   initializePartition,
   getCityPlans,
   initializeCityPlans,
-  initializeGameState,
+  getNewGameState,
+  initializeGamestate,
   getGameState,
   getCardDataFromGamestate,
   getSlackPayload,

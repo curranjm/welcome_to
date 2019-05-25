@@ -10,7 +10,7 @@ const handler = async (event) => {
   } else if (event.httpMethod === 'GET') {
     if (event.path === '/game/new') {
       utility.sendToSlackbot();
-      response = await game.initializeGameState(false);
+      response = await game.initializeGamestate(false);
     } else if (event.resource === '/game/load/{gameID}') {
       const gameState = await game.getGameState(event.pathParameters.gameID);
       const cardData = game.getCardDataFromGamestate(gameState);

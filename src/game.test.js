@@ -1,6 +1,11 @@
 const game = require('./game');
 const constants = require('./constants');
 
+/* -----------------------------------------------------------------------------------------------
+Testing Mocks
+----------------------------------------------------------------------------------------------- */
+
+// A deck is a list of card IDs.
 const mockDeck = [
   1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
   11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -13,12 +18,19 @@ const mockDeck = [
   81,
 ];
 
+// CityPlans is an array of arrays containing the card IDs associated with each
+// of the different city plan types (n1, n2, n3)
 const mockCityPlans = [
   [1, 2, 3],
   [4, 5, 6],
   [7, 8, 9],
 ];
 
+// Gamestate consists of four fields:
+//   - gameID: used as the key in the DB
+//   - partitions: array of 3 objects containing deck state for the 3 draw decks
+//   - cityPlans: object containing the card IDs of this game's 3 city plans
+//   - completedPlans: an array containing the city plans that have been completed
 const mockGamestate = {
   gameID: 'bea193b0-7e7e-11e9-aa93-f1bd06033551',
   partitions: [
@@ -55,6 +67,46 @@ const mockGamestate = {
     n2: 12,
     n3: 27,
   },
+  completedPlans: [],
+};
+
+// The expected initial gamestate  with no randomization.
+const expectedInitialGamestate = {
+  gameID: 1,
+  partitions: [
+    {
+      undrawn: [
+        3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+      ],
+      discarded: [],
+      activeFaceCardID: 1,
+      activeFlipCardID: 2,
+    },
+    {
+      undrawn: [
+        30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+        52, 53, 54,
+      ],
+      discarded: [],
+      activeFaceCardID: 28,
+      activeFlipCardID: 29,
+    },
+    {
+      undrawn: [
+        57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
+        79, 80, 81,
+      ],
+      discarded: [],
+      activeFaceCardID: 55,
+      activeFlipCardID: 56,
+    },
+  ],
+  cityPlans: {
+    n1: '1',
+    n2: '12',
+    n3: '23',
+  },
+  completedPlans: [],
 };
 
 const mockGameData = {
@@ -78,6 +130,10 @@ const mockGameData = {
     n3: constants.CITY_PLANS[27],
   },
 };
+
+/* -----------------------------------------------------------------------------------------------
+End Testing Mocks
+----------------------------------------------------------------------------------------------- */
 
 describe(
   'Deck Setup',
@@ -213,6 +269,17 @@ describe(
           n2: mockCityPlans[1][0],
           n3: mockCityPlans[2][0],
         });
+      },
+    );
+
+    it(
+      'initializes the gamestate for a basic game as expected',
+      () => {
+        // eslint-disable-next-line no-unused-vars
+        const actual = game.getNewGameState(1, false, (obj) => {}, num => 0);
+        console.log('expected', expectedInitialGamestate);
+        console.log('actual: ', actual);
+        expect(actual).toEqual(expectedInitialGamestate);
       },
     );
   },

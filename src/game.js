@@ -152,7 +152,13 @@ const initializeGamestate = (advanced) => {
  * Game functions
  *
  *************************************************************************** */
-
+/**
+ * Takes in a cityPlan object and the array of completed city plans and generates
+ * a string to be used in the slack payload.
+ *
+ * @param {object} cityPlan A cityPlan object from the gamestate.
+ * @param {array} completedPlans The array of city plans that have been completed.
+ */
 const getCityPlanString = (cityPlan, completedPlans) => {
   const goalType = Object.keys(cityPlan.goals);
   const isEstateGoal = goalType.includes(ESTATE_GOAL_KEY);
@@ -174,6 +180,14 @@ const getCityPlanString = (cityPlan, completedPlans) => {
   return `\`n${cityPlan.n}\`: ${goal}\n${pointsFirst}  |  ${pointsOther}`;
 };
 
+/**
+ * Takes the city plans from the game state and the array of completed city plan array
+ * and uses them to generate an object mapping the city plans to their corresponding
+ * output strings, which will be used in the slack payload.
+ *
+ * @param {object} cityPlans An object containing the 3 city plan objects.
+ * @param {array} completedPlans The completed city plan IDs.
+ */
 const getCityPlanData = (cityPlans, completedPlans) => {
   const n1 = constants.CITY_PLANS[cityPlans.n1];
   const n2 = constants.CITY_PLANS[cityPlans.n2];
@@ -186,6 +200,12 @@ const getCityPlanData = (cityPlans, completedPlans) => {
   };
 };
 
+/**
+ * Extracts the card IDs from the gamestate object and uses them to generate a
+ * card data object. This object is used to build the slack payload object.
+ *
+ * @param {object} gamestate The current gamestate.
+ */
 const getCardDataFromGamestate = ({
   partitions,
   cityPlans,
@@ -201,6 +221,12 @@ const getCardDataFromGamestate = ({
   };
 };
 
+/**
+ * Get the slack payload object, which will be sent to the incoming webhook
+ * and rendered in the slack channel.
+ *
+ * @param {object} cardData The output data generated from the current gamestate.
+ */
 const getSlackPayload = ({
   partitions,
   cityPlans,

@@ -18,16 +18,14 @@ const handler = async (event) => {
     }
   } else if (event.httpMethod === 'POST') {
     const next = utility.getCommandObjectFromBody(event.body);
-    console.log(next);
+
     if (constants.CITY_PLAN_ACTIONS.includes(next.action)) {
       response = await game.updateCityPlan(next.gameID, next.action);
       console.log(response);
     } else if (next.action === constants.BUTTON_ACTIONS.DEAL) {
-      console.log('PRESSED DEAL BUTTON!!!');
-      response = 'DEAL';
+      response = await game.advanceGameState(next.gameID);
     } else {
-      response = 'DIDN\'T MATCH IN POST';
-      console.log(response);
+      console.log('Invalid POST route.');
     }
   }
   return utility.done(response);

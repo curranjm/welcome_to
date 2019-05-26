@@ -109,7 +109,9 @@ const expectedInitialGamestate = {
   completedPlans: [],
 };
 
+// Mock game data as it would be derived from gamestate with getCardDataFromGamestate
 const mockGameData = {
+  gameID: 'bea193b0-7e7e-11e9-aa93-f1bd06033551',
   partitions: [
     {
       faceCard: constants.CARDS[6],
@@ -125,10 +127,19 @@ const mockGameData = {
     },
   ],
   cityPlans: {
-    n1: constants.CITY_PLANS[1],
-    n2: constants.CITY_PLANS[12],
-    n3: constants.CITY_PLANS[27],
+    n1: '`n1`: Requires estates of the following sizes: 5, 5\n`first`: 8  |  `other`: 4',
+    n2: '`n2`: Requires estates of the following sizes: 3, 6\n`first`: 8  |  `other`: 4',
+    n3: '`n3`: Requires estates of the following sizes: 2, 5\n`first`: 7  |  `other`: 3',
   },
+};
+
+const mockPartitionWithEmptyDrawDeck = {
+  undrawn: [],
+  discarded: [
+    3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+  ],
+  activeFaceCardID: 1,
+  activeFlipCardID: 2,
 };
 
 /* -----------------------------------------------------------------------------------------------
@@ -277,8 +288,6 @@ describe(
       () => {
         // eslint-disable-next-line no-unused-vars
         const actual = game.getNewGameState(1, false, (obj) => {}, num => 0);
-        console.log('expected', expectedInitialGamestate);
-        console.log('actual: ', actual);
         expect(actual).toEqual(expectedInitialGamestate);
       },
     );
@@ -299,8 +308,48 @@ describe(
     it(
       'generates the expected slack payload',
       () => {
+        // eslint-disable-next-line no-unused-vars
         const payload = game.getSlackPayload(mockGameData);
-        console.log('payload: ', payload);
+        // TODO:  add expected slack payload and assert
+      },
+    );
+  },
+);
+
+describe(
+  'Card dealing functions',
+  () => {
+    it(
+      'advances partition state correctly when deck is not empty',
+      () => {
+        const partition = expectedInitialGamestate.partitions[0];
+        const expected = {
+          undrawn: [
+            4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+            20, 21, 22, 23, 24, 25, 26, 27,
+          ],
+          discarded: [2],
+          activeFaceCardID: 3,
+          activeFlipCardID: 1,
+        };
+        expect(game.advancePartition(partition, arr => arr.reverse())).toEqual(expected);
+      },
+    );
+
+    it(
+      'advances partition state correctly when deck is empty',
+      () => {
+        const partition = mockPartitionWithEmptyDrawDeck;
+        const expected = {
+          undrawn: [
+            26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11,
+            10, 9, 8, 7, 6, 5, 4, 3,
+          ],
+          discarded: [2],
+          activeFaceCardID: 27,
+          activeFlipCardID: 1,
+        };
+        expect(game.advancePartition(partition, arr => arr.reverse())).toEqual(expected);
       },
     );
   },

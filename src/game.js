@@ -391,8 +391,35 @@ const getSlackPayload = ({
  * Game state functions
  *
  *************************************************************************** */
+const advancePartition = (
+  {
+    undrawn,
+    discarded,
+    activeFaceCardID,
+    activeFlipCardID,
+  },
+  shuffle,
+) => {
+  // If the draw deck is empty, we need to shuffle first,
+  // otherwise draw and discarded decks stay as is
+  const hasEmptyDrawDeck = undrawn.length === 0;
+  const newUndrawn = hasEmptyDrawDeck ? shuffle(discarded) : undrawn;
+  const newDiscarded = hasEmptyDrawDeck ? [] : discarded;
 
-// const advanceGameState = async (gameID)
+  // Get the new face card from the undrawn pile
+  const newActiveFaceCardID = newUndrawn.shift();
+  // The old face card becomes the new flip card
+  const newActiveFlipCardID = activeFaceCardID;
+  // The old flip card is discarded
+  newDiscarded.push(activeFlipCardID);
+
+  return {
+    undrawn: newUndrawn,
+    discarded: newDiscarded,
+    activeFaceCardID: newActiveFaceCardID,
+    activeFlipCardID: newActiveFlipCardID,
+  };
+};
 
 const getGameState = async gameID => DB.get(GAME_ID_KEY, gameID, GAME_TABLE);
 
@@ -401,6 +428,20 @@ const showGame = async (gameState) => {
   const slackPayload = getSlackPayload(cardData);
   await utility.sendToSlackbot(slackPayload);
   return slackPayload;
+};
+
+const advanceGameState = async (gameID) => {
+  const gamestate = await getGameState(gameID);
+  gamestate.partitions[0] = advancePartition(gamestate.partitions[0], utility.shuffle);
+  gamestate.partitions[1] = advancePartition(gamestate.partitions[1], utility.shuffle);
+  gamestate.partitions[2] = advancePartition(gamestate.partitions[2], utility.shuffle);
+
+  await DB.write(
+    gamestate,
+    GAME_TABLE,
+  );
+
+  return showGame(gamestate);
 };
 
 const updateCityPlan = async (gameID, cityPlan) => {
@@ -450,4 +491,6 @@ module.exports = {
   createGame,
   currentGame,
   updateCityPlan,
+  advancePartition,
+  advanceGameState,
 };

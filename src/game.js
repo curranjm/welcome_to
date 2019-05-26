@@ -141,15 +141,10 @@ const initializeGamestate = (advanced) => {
   );
 };
 
-/** ***************************************************************************
- *
- * End game initialization functions
- *
- *************************************************************************** */
 
 /** ***************************************************************************
  *
- * Game functions
+ * Game output functions
  *
  *************************************************************************** */
 /**
@@ -207,6 +202,7 @@ const getCityPlanData = (cityPlans, completedPlans) => {
  * @param {object} gamestate The current gamestate.
  */
 const getCardDataFromGamestate = ({
+  gameID,
   partitions,
   cityPlans,
   completedPlans,
@@ -216,8 +212,10 @@ const getCardDataFromGamestate = ({
     flipCard: constants.CARDS[partition.activeFlipCardID],
   }));
   return {
+    gameID,
     partitions: partitionData,
     cityPlans: getCityPlanData(cityPlans, completedPlans),
+
   };
 };
 
@@ -228,6 +226,7 @@ const getCardDataFromGamestate = ({
  * @param {object} cardData The output data generated from the current gamestate.
  */
 const getSlackPayload = ({
+  gameID,
   partitions,
   cityPlans,
 }) => ({
@@ -275,6 +274,23 @@ const getSlackPayload = ({
       },
     },
     {
+      type: 'actions',
+      elements: [
+        {
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: 'Complete City Plan',
+          },
+          value: JSON.stringify({
+            gameID,
+            action: constants.BUTTON_ACTIONS.COMPLETE_N1,
+          }),
+          action_id: 'next',
+        },
+      ],
+    },
+    {
       type: 'divider',
     },
     {
@@ -285,6 +301,23 @@ const getSlackPayload = ({
       },
     },
     {
+      type: 'actions',
+      elements: [
+        {
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: 'Complete City Plan',
+          },
+          value: JSON.stringify({
+            gameID,
+            action: constants.BUTTON_ACTIONS.COMPLETE_N2,
+          }),
+          action_id: 'next',
+        },
+      ],
+    },
+    {
       type: 'divider',
     },
     {
@@ -293,6 +326,23 @@ const getSlackPayload = ({
         text: cityPlans.n3,
         type: 'mrkdwn',
       },
+    },
+    {
+      type: 'actions',
+      elements: [
+        {
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: 'Complete City Plan',
+          },
+          value: JSON.stringify({
+            gameID,
+            action: constants.BUTTON_ACTIONS.COMPLETE_N3,
+          }),
+          action_id: 'next',
+        },
+      ],
     },
     {
       type: 'section',
@@ -315,17 +365,77 @@ const getSlackPayload = ({
         type: 'mrkdwn',
       },
     },
+    {
+      type: 'actions',
+      elements: [
+        {
+          type: 'button',
+          style: 'primary',
+          text: {
+            type: 'plain_text',
+            text: 'Next Turn',
+          },
+          value: JSON.stringify({
+            gameID,
+            action: constants.BUTTON_ACTIONS.DEAL,
+          }),
+          action_id: 'next',
+        },
+      ],
+    },
   ],
 });
+
+/** ***************************************************************************
+ *
+ * Game state functions
+ *
+ *************************************************************************** */
+
+// const advanceGameState = async (gameID)
+
+const getGameState = async gameID => DB.get(GAME_ID_KEY, gameID, GAME_TABLE);
+
+const showGame = async (gameState) => {
+  const cardData = getCardDataFromGamestate(gameState);
+  const slackPayload = getSlackPayload(cardData);
+  await utility.sendToSlackbot(slackPayload);
+  return slackPayload;
+};
+
+const updateCityPlan = async (gameID, cityPlan) => {
+  const gamestate = await getGameState(gameID);
+  const planIndex = gamestate.completedPlans.indexOf(cityPlan);
+  if (planIndex >= 0) {
+    gamestate.completedPlans.splice(planIndex, 1);
+  } else {
+    gamestate.completedPlans.push(cityPlan);
+  }
+
+  await DB.write(
+    gamestate,
+    GAME_TABLE,
+  );
+
+  return showGame(gamestate);
+};
+
+const createGame = async () => {
+  const newGame = await initializeGamestate(false);
+  return showGame(newGame);
+};
+
+const currentGame = async (gameID) => {
+  const gameState = await getGameState(gameID);
+  return showGame(gameState);
+};
 
 
 /** ***************************************************************************
  *
- * End game functions
+ * Exports
  *
  *************************************************************************** */
-
-const getGameState = async gameID => DB.get(GAME_ID_KEY, gameID, GAME_TABLE);
 
 module.exports = {
   getDeckArray,
@@ -337,4 +447,7 @@ module.exports = {
   getGameState,
   getCardDataFromGamestate,
   getSlackPayload,
+  createGame,
+  currentGame,
+  updateCityPlan,
 };

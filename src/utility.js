@@ -94,9 +94,17 @@ const shuffle = (array) => {
 
 /** ****************************************************************************
  *
- * End random number generation.
+ * HTTP helpers
  *
  **************************************************************************** */
+const getCommandObjectFromBody = (body) => {
+  // Decode the body
+  const decodedBody = decodeURIComponent(body);
+  // Parse the part after 'payload='
+  const payload = JSON.parse(decodedBody.substring(8));
+  // The value should be a JSON string
+  return JSON.parse(payload.actions[0].value);
+};
 
 const done = response => ({
   statusCode: '200',
@@ -108,7 +116,7 @@ const done = response => ({
   },
 });
 
-const sendToSlackbot = payload => wretch(SLACK_INCOMING_WEBHOOK_URL)
+const sendToSlackbot = async payload => wretch(SLACK_INCOMING_WEBHOOK_URL)
   .headers({ 'Content-Type': 'text/plain' })
   .json(payload)
   .post()
@@ -119,4 +127,5 @@ module.exports = {
   shuffle,
   done,
   sendToSlackbot,
+  getCommandObjectFromBody,
 };

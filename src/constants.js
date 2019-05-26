@@ -669,9 +669,33 @@ const ACTIONS = Object.freeze({
   21: 'bis',
 });
 
+const API_BASE = 'https://mf3ogqn6na.execute-api.us-east-1.amazonaws.com/welcome';
+
+const ENDPOINTS = Object.freeze({
+  new: `${API_BASE}/game/new/`,
+  load: `${API_BASE}/game/load/`,
+  next: `${API_BASE}/game/next/`,
+});
+
+const BUTTON_ACTIONS = Object.freeze({
+  DEAL: 'deal',
+  COMPLETE_N1: 1,
+  COMPLETE_N2: 2,
+  COMPLETE_N3: 3,
+});
+
+const CITY_PLAN_ACTIONS = [
+  BUTTON_ACTIONS.COMPLETE_N1,
+  BUTTON_ACTIONS.COMPLETE_N2,
+  BUTTON_ACTIONS.COMPLETE_N3,
+];
+
 module.exports = {
   CARDS,
   CITY_PLANS,
   IMAGES,
   ACTIONS,
+  ENDPOINTS,
+  BUTTON_ACTIONS,
+  CITY_PLAN_ACTIONS,
 };

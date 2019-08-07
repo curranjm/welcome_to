@@ -1,2 +1,2 @@
 # welcomeTo
-Basic Python scripts to automate dealing rounds of Welcome To...
+Automating dealing hands in Welcome To... with a node app using API gateway with Lambda.

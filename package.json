@@ -20,7 +20,7 @@
   "homepage": "https://github.com/curranjm/welcome_to#readme",
   "dependencies": {
     "archiver": "^3.0.0",
-    "aws-sdk": "^2.458.0",
+    "aws-sdk": "^2.814.0",
     "node-fetch": "^2.6.0",
     "node-uuid": "^1.4.8",
     "wretch": "^1.5.2"
